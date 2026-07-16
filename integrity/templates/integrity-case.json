@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "case": {
+    "id": "IC-NEW-CASE",
+    "title": "Replace this starter title",
+    "version": "0.1.0",
+    "status": "draft",
+    "owners": [
+      "replace-me"
+    ],
+    "last_reviewed": "2026-07-16"
+  },
+  "authorization": {
+    "status": "unknown",
+    "scope": "Replace this with the exact owned or explicitly authorized scope before active testing.",
+    "evidence_reference": "replace-me: non-secret authorization reference",
+    "expires": null,
+    "excluded_actions": [
+      "Any active test until authorization is confirmed",
+      "Access to personal data",
+      "Destructive or availability-impacting actions"
+    ]
+  },
+  "intent": {
+    "purpose": "Replace this with the system purpose in one sentence.",
+    "safety_properties": [
+      "Replace this with a property that must remain true."
+    ],
+    "non_goals": [
+      "Replace this with something the system does not promise."
+    ]
+  },
+  "components": [
+    {
+      "id": "untrusted-input",
+      "name": "Untrusted input source",
+      "kind": "actor",
+      "trust": "untrusted",
+      "description": "Replace this with the actor or component that supplies input."
+    },
+    {
+      "id": "system",
+      "name": "System under review",
+      "kind": "service",
+      "trust": "partially_trusted",
+      "description": "Replace this with the component whose behavior is being assured."
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "B1",
+      "from": "untrusted-input",
+      "to": "system",
+      "carrier": "Replace this with the protocol, call, file, event, or physical carrier.",
+      "trust_change": "Untrusted data enters the system's decision boundary.",
+      "entry_points": [
+        "replace-me: entry point"
+      ],
+      "data": [
+        "replace-me: data or authority crossing"
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I1",
+      "statement": "Replace this with one falsifiable statement that must remain true.",
+      "rationale": "Replace this with why the invariant is necessary for the intent.",
+      "failure_impact": "Replace this with the concrete harm if the invariant fails.",
+      "priority": "high"
+    }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "actor": "untrusted-input",
+      "scenario": "Replace this with how the actor could falsify the invariant.",
+      "preconditions": [
+        "Replace this with the cheapest required precondition."
+      ],
+      "targets": [
+        "I1"
+      ],
+      "likelihood": "possible",
+      "impact": "high"
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "type": "preventive",
+      "intent": "Replace this with how the design intends to preserve I1.",
+      "implementation": [
+        "replace-me: stable code, config, or design reference"
+      ],
+      "enforces": [
+        "I1"
+      ],
+      "limitations": [
+        "Starter control has not yet been inspected."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "kind": "review",
+      "claim": "Replace this with the exact observation that would support I1 and C1.",
+      "artifact": "replace-me: stable test, trace, review, or evidence-store reference",
+      "result": "inconclusive",
+      "observed_at": "2026-07-16",
+      "verifies": [
+        "I1",
+        "C1"
+      ]
+    }
+  ],
+  "decisions": [],
+  "residual_risks": [
+    {
+      "id": "R1",
+      "statement": "The case is a starter and does not yet support its assurance claim.",
+      "owner": "replace-me",
+      "disposition": "investigate",
+      "review_by": null,
+      "related": [
+        "I1"
+      ],
+      "next_action": "Confirm authorization, replace starter content, inspect implementation, and collect evidence."
+    }
+  ]
+}

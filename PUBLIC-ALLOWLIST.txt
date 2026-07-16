@@ -1,0 +1,25 @@
+# Exact source paths for the first sanitized whitehack-framework release.
+# Copy only these paths into a clean repository with no operational Git history.
+# In the standalone public repo, promote site/README.md to the root README.md.
+PUBLIC-ALLOWLIST.txt
+LICENSE
+SECURITY.md
+CONTRIBUTING.md
+PUBLICATION.md
+integrity/README.md
+integrity/integrity_case.py
+integrity/schema/integrity-case.schema.json
+integrity/templates/integrity-case.json
+integrity/examples/loopback-owner-console.json
+integrity/examples/loopback-owner-console.md
+integrity/tests/test_integrity_case.py
+site/index.html
+site/style.css
+site/README.md
+site/SECURITY.md
+site/LICENSE.txt
+site/downloads/integrity-case.schema.json
+site/downloads/integrity-case.template.json
+site/downloads/integrity_case.py
+site/downloads/loopback-owner-console.example.json
+site/tests/test_site.py

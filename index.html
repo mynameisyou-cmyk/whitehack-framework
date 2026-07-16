@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    >
+    <meta
+      name="description"
+      content="Whitehack is an open defensive assurance framework that connects security intention to implementation and evidence."
+    >
+    <meta name="color-scheme" content="dark light">
+    <title>Whitehack — intention you can inspect</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Whitehack home">
+        <span class="brand-mark" aria-hidden="true">W/</span>
+        <span>whitehack</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#trace">The trace</a>
+        <a href="#start">Start</a>
+        <a href="./README.md">Guide</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow-row" aria-label="Project qualities">
+            <span>Open framework</span>
+            <span>Defensive only</span>
+            <span>Evidence first</span>
+          </div>
+          <h1 id="hero-title">Make security claims<br><em>traceable.</em></h1>
+          <p class="hero-lede">
+            Whitehack connects what a system is meant to do with what it actually
+            implements—and keeps the uncertainty visible. Less security theatre.
+            More shared understanding.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="button button-primary"
+              href="./downloads/integrity-case.template.json"
+            >Get the starter case</a>
+            <a
+              class="button button-secondary"
+              href="./downloads/loopback-owner-console.example.json"
+            >Inspect an example</a>
+          </div>
+        </div>
+
+        <aside class="snapshot" aria-label="Synthetic assurance snapshot">
+          <div class="snapshot-head">
+            <div>
+              <span class="kicker">Synthetic example</span>
+              <h2>Owner console</h2>
+            </div>
+            <span class="status">Accepted</span>
+          </div>
+
+          <div class="snapshot-metrics">
+            <div class="metric">
+              <strong>4/4</strong>
+              <span>invariants supported</span>
+            </div>
+            <div class="metric">
+              <strong>4/4</strong>
+              <span>controls evidenced</span>
+            </div>
+            <div class="metric">
+              <strong>4</strong>
+              <span>passing observations</span>
+            </div>
+            <div class="metric metric-risk">
+              <strong>1</strong>
+              <span>residual risk visible</span>
+            </div>
+          </div>
+
+          <div class="mini-trace" aria-label="Example trace from threat to evidence">
+            <div>
+              <span class="node-id">T1</span>
+              <p>Hostile web origin</p>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div>
+              <span class="node-id">I2</span>
+              <p>Trusted requests only</p>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div>
+              <span class="node-id">C3</span>
+              <p>Origin + CSRF policy</p>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div>
+              <span class="node-id node-pass">E3</span>
+              <p>Boundary test passes</p>
+            </div>
+          </div>
+
+          <p class="snapshot-note">
+            A dashboard summarizes evidence. It never turns structural completeness
+            into a claim that a system is secure.
+          </p>
+        </aside>
+      </section>
+
+      <section class="authorization" aria-labelledby="authorization-title">
+        <span class="authorization-icon" aria-hidden="true">✓</span>
+        <div>
+          <h2 id="authorization-title">Permission comes before the method.</h2>
+          <p>
+            Use Whitehack only on systems you own or have explicit permission to
+            assess. The framework does not grant authorization. Keep credentials,
+            personal data, and unresolved exploit details out of public cases.
+          </p>
+        </div>
+        <a href="./SECURITY.md">Read the safety boundary</a>
+      </section>
+
+      <section class="trace-section" id="trace" aria-labelledby="trace-title">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">One inspectable chain</span>
+            <h2 id="trace-title">From intention to evidence.</h2>
+          </div>
+          <p>
+            Each link names a question. Missing links become visible work—not
+            optimistic prose hidden in a report.
+          </p>
+        </div>
+
+        <ol class="trace-grid">
+          <li>
+            <span class="trace-number">01</span>
+            <h3>Intent</h3>
+            <p>What is this system for, and what does it explicitly not promise?</p>
+          </li>
+          <li>
+            <span class="trace-number">02</span>
+            <h3>Invariant</h3>
+            <p>What must remain true for that intention to survive contact with reality?</p>
+          </li>
+          <li>
+            <span class="trace-number">03</span>
+            <h3>Threat</h3>
+            <p>Who can falsify the invariant, through which trust boundary?</p>
+          </li>
+          <li>
+            <span class="trace-number">04</span>
+            <h3>Control</h3>
+            <p>What design choice intends to prevent, detect, correct, or recover?</p>
+          </li>
+          <li>
+            <span class="trace-number">05</span>
+            <h3>Implementation</h3>
+            <p>Where does that control exist in code, configuration, or process?</p>
+          </li>
+          <li>
+            <span class="trace-number">06</span>
+            <h3>Evidence</h3>
+            <p>What observed result supports the claim—and when was it observed?</p>
+          </li>
+          <li class="trace-risk">
+            <span class="trace-number">07</span>
+            <h3>Residual risk</h3>
+            <p>What remains, who owns it, and what event makes the decision change?</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="audiences" aria-labelledby="audiences-title">
+        <div class="section-heading compact-heading">
+          <div>
+            <span class="kicker">One artifact, different attention</span>
+            <h2 id="audiences-title">Depth without the fog.</h2>
+          </div>
+        </div>
+        <div class="audience-grid">
+          <article>
+            <span>For builders</span>
+            <h3>See the promise beside the code.</h3>
+            <p>Implementation references make each control concrete and reviewable.</p>
+          </article>
+          <article>
+            <span>For reviewers</span>
+            <h3>Follow the evidence, not confidence.</h3>
+            <p>Cross-reference checks surface unsupported invariants and controls.</p>
+          </article>
+          <article>
+            <span>For decision-makers</span>
+            <h3>Keep uncertainty in the room.</h3>
+            <p>Residual risk, ownership, and rationale remain visible at first sight.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="start-section" id="start" aria-labelledby="start-title">
+        <div class="start-copy">
+          <span class="kicker">No build. No account. Standard library only.</span>
+          <h2 id="start-title">Your first case is one JSON file.</h2>
+          <p>
+            Copy the template, replace the starter content, then validate the
+            references and render a compact Markdown dashboard.
+          </p>
+        </div>
+        <div class="terminal" role="region" aria-label="Integrity Case commands" tabindex="0">
+          <div class="terminal-bar" aria-hidden="true">
+            <i></i><i></i><i></i>
+            <span>terminal</span>
+          </div>
+          <pre><code><span class="prompt">$</span> cp integrity/templates/integrity-case.json \
+    my-system.integrity.json
+
+<span class="prompt">$</span> python3 integrity/integrity_case.py validate \
+    my-system.integrity.json
+
+<span class="success">OK</span> 4/4 invariants supported
+
+<span class="prompt">$</span> python3 integrity/integrity_case.py render \
+    my-system.integrity.json --output dashboard.md</code></pre>
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <span class="kicker">Claim → trace → delta</span>
+        <h2 id="closing-title">Security is easier to improve<br>when everyone can see the same system.</h2>
+        <div class="hero-actions closing-actions">
+          <a
+            class="button button-primary"
+            href="./downloads/integrity-case.template.json"
+          >Start an Integrity Case</a>
+          <a
+            class="button button-secondary"
+            href="https://github.com/mynameisyou-cmyk/whitehack-framework"
+          >Build with us on Codeberg</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand footer-brand">
+        <span class="brand-mark" aria-hidden="true">W/</span>
+        <span>whitehack</span>
+      </div>
+      <p>Open defensive assurance. <a href="./LICENSE.txt">Apache-2.0.</a></p>
+      <nav aria-label="Footer navigation">
+        <a href="./README.md">README</a>
+        <a href="./README.md#contributing">Contribute</a>
+        <a href="./SECURITY.md">Publish safely</a>
+      </nav>
+    </footer>
+  </body>
+</html>

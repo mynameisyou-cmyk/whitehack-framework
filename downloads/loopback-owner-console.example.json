@@ -1,0 +1,330 @@
+{
+  "schema_version": "1.0",
+  "case": {
+    "id": "IC-LOOPBACK-OWNER-CONSOLE",
+    "title": "Synthetic loopback owner console",
+    "version": "1.0.0",
+    "status": "accepted",
+    "owners": [
+      "example-platform-team"
+    ],
+    "last_reviewed": "2026-07-16"
+  },
+  "authorization": {
+    "status": "not_required",
+    "scope": "Offline analysis of a synthetic example with no live target or network activity.",
+    "evidence_reference": "public-example:synthetic-loopback-console",
+    "expires": null,
+    "excluded_actions": [
+      "Network scanning",
+      "Testing any third-party service",
+      "Use of real credentials or personal data"
+    ]
+  },
+  "intent": {
+    "purpose": "Let one local owner inspect and change a development service through a browser console without turning the console into a network service.",
+    "safety_properties": [
+      "Only the authenticated local owner can perform state-changing actions.",
+      "A web page from another origin cannot drive the console through the owner's browser.",
+      "Automation clients receive only the minimum explicitly granted capabilities.",
+      "Bootstrap owner credentials are not persisted or exposed to child processes."
+    ],
+    "non_goals": [
+      "Remote or multi-user administration",
+      "Defense after compromise of the owner's operating-system account",
+      "Storage of production secrets"
+    ]
+  },
+  "components": [
+    {
+      "id": "owner-browser",
+      "name": "Owner browser",
+      "kind": "client",
+      "trust": "trusted",
+      "description": "The interactive browser session controlled by the local owner."
+    },
+    {
+      "id": "local-service",
+      "name": "Loopback console service",
+      "kind": "service",
+      "trust": "partially_trusted",
+      "description": "The local HTTP service exposing read and mutation routes."
+    },
+    {
+      "id": "untrusted-web",
+      "name": "Untrusted web origin",
+      "kind": "external actor",
+      "trust": "untrusted",
+      "description": "Any unrelated web page loaded in a browser on the same machine."
+    },
+    {
+      "id": "automation-client",
+      "name": "Scoped automation client",
+      "kind": "client",
+      "trust": "partially_trusted",
+      "description": "A local client given a capability token for a fixed route subset."
+    },
+    {
+      "id": "local-observer",
+      "name": "Local process observer",
+      "kind": "local actor",
+      "trust": "untrusted",
+      "description": "A same-user process able to inspect ordinary files or inherited environment variables."
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "B1",
+      "from": "owner-browser",
+      "to": "local-service",
+      "carrier": "HTTP over an operating-system loopback socket",
+      "trust_change": "An interactive browser request asks the service to mutate owner state.",
+      "entry_points": [
+        "POST /missions",
+        "POST /decisions"
+      ],
+      "data": [
+        "Owner session cookie",
+        "CSRF token",
+        "JSON mutation payload"
+      ]
+    },
+    {
+      "id": "B2",
+      "from": "untrusted-web",
+      "to": "local-service",
+      "carrier": "Cross-origin browser request to a loopback address",
+      "trust_change": "Internet-controlled content attempts to reach a local privileged service.",
+      "entry_points": [
+        "All HTTP routes"
+      ],
+      "data": [
+        "Attacker-controlled headers and body"
+      ]
+    },
+    {
+      "id": "B3",
+      "from": "automation-client",
+      "to": "local-service",
+      "carrier": "HTTP over loopback with a scoped bearer capability",
+      "trust_change": "A non-owner process receives authority over a narrow operation set.",
+      "entry_points": [
+        "POST /feedback",
+        "POST /missions"
+      ],
+      "data": [
+        "Scoped capability token",
+        "JSON request payload"
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I1",
+      "statement": "Every state-changing owner route requires a valid owner session.",
+      "rationale": "Loopback location is not proof of owner identity.",
+      "failure_impact": "An unrelated local process or web origin could change owner state.",
+      "priority": "critical"
+    },
+    {
+      "id": "I2",
+      "statement": "Browser requests with an untrusted Host or Origin cannot reach privileged behavior.",
+      "rationale": "Browsers can send requests to loopback from attacker-controlled pages.",
+      "failure_impact": "A remote web page could drive the local console through DNS rebinding or cross-site requests.",
+      "priority": "critical"
+    },
+    {
+      "id": "I3",
+      "statement": "Each automation token authorizes only its explicit route allowlist.",
+      "rationale": "Automation needs capability without inheriting full owner authority.",
+      "failure_impact": "Compromise of one client would become compromise of the full console.",
+      "priority": "high"
+    },
+    {
+      "id": "I4",
+      "statement": "The bootstrap owner token exists only in service memory until it is exchanged for a protected cookie.",
+      "rationale": "Files and inherited environment variables unnecessarily widen credential exposure.",
+      "failure_impact": "A local observer could recover durable owner authority.",
+      "priority": "high"
+    }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "actor": "untrusted-web",
+      "scenario": "A hostile page targets loopback routes using cross-origin requests or a misleading Host header.",
+      "preconditions": [
+        "The owner visits attacker-controlled content while the console is running."
+      ],
+      "targets": [
+        "I1",
+        "I2"
+      ],
+      "likelihood": "possible",
+      "impact": "critical"
+    },
+    {
+      "id": "T2",
+      "actor": "automation-client",
+      "scenario": "A scoped client reuses its token against an owner-only route.",
+      "preconditions": [
+        "The client has a valid capability token."
+      ],
+      "targets": [
+        "I1",
+        "I3"
+      ],
+      "likelihood": "possible",
+      "impact": "high"
+    },
+    {
+      "id": "T3",
+      "actor": "local-observer",
+      "scenario": "A same-user process searches files and child-process environments for the owner bootstrap token.",
+      "preconditions": [
+        "The observer can read ordinary same-user files or process metadata."
+      ],
+      "targets": [
+        "I4"
+      ],
+      "likelihood": "possible",
+      "impact": "high"
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "type": "preventive",
+      "intent": "Keep the console local and reject unexpected authority headers before routing.",
+      "implementation": [
+        "src/owner_console/server.py: bind loopback and validate Host"
+      ],
+      "enforces": [
+        "I2"
+      ],
+      "limitations": [
+        "Loopback binding does not identify the owner by itself."
+      ]
+    },
+    {
+      "id": "C2",
+      "type": "preventive",
+      "intent": "Exchange a single-use in-memory bootstrap token for an HttpOnly, SameSite=Strict owner cookie.",
+      "implementation": [
+        "src/owner_console/auth.py: bootstrap exchange and session validation"
+      ],
+      "enforces": [
+        "I1",
+        "I4"
+      ],
+      "limitations": [
+        "A compromised owner account can still inspect service memory or control the browser."
+      ]
+    },
+    {
+      "id": "C3",
+      "type": "preventive",
+      "intent": "Require an exact trusted Origin, a CSRF token, and JSON content type on browser mutations.",
+      "implementation": [
+        "src/owner_console/http_policy.py: mutation request policy"
+      ],
+      "enforces": [
+        "I2"
+      ],
+      "limitations": [
+        "The policy relies on browser origin semantics and correct proxy exclusion."
+      ]
+    },
+    {
+      "id": "C4",
+      "type": "preventive",
+      "intent": "Resolve automation tokens to immutable route scopes and reject every non-allowlisted route.",
+      "implementation": [
+        "src/owner_console/capabilities.py: exact route capability map"
+      ],
+      "enforces": [
+        "I3"
+      ],
+      "limitations": [
+        "The allowed route can still contain an implementation bug."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "kind": "test",
+      "claim": "Unexpected Host values and non-loopback binding attempts are rejected.",
+      "artifact": "tests/test_owner_console_boundary.py::test_rejects_untrusted_host",
+      "result": "pass",
+      "observed_at": "2026-07-16",
+      "verifies": [
+        "I2",
+        "C1"
+      ]
+    },
+    {
+      "id": "E2",
+      "kind": "test",
+      "claim": "Owner mutations fail before bootstrap exchange and succeed only with the protected session cookie.",
+      "artifact": "tests/test_owner_console_auth.py::test_owner_session_required",
+      "result": "pass",
+      "observed_at": "2026-07-16",
+      "verifies": [
+        "I1",
+        "I4",
+        "C2"
+      ]
+    },
+    {
+      "id": "E3",
+      "kind": "test",
+      "claim": "Cross-origin, missing-CSRF, and non-JSON mutation requests are rejected.",
+      "artifact": "tests/test_owner_console_boundary.py::test_browser_mutation_policy",
+      "result": "pass",
+      "observed_at": "2026-07-16",
+      "verifies": [
+        "I2",
+        "C3"
+      ]
+    },
+    {
+      "id": "E4",
+      "kind": "test",
+      "claim": "A scoped automation token cannot call an owner-only route or a route outside its allowlist.",
+      "artifact": "tests/test_owner_console_capabilities.py::test_scope_is_exact",
+      "result": "pass",
+      "observed_at": "2026-07-16",
+      "verifies": [
+        "I3",
+        "C4"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "context": "The console is an owner tool, while automation needs a small subset of its operations.",
+      "choice": "Keep the owner surface loopback-only and issue separate capability tokens to automation clients.",
+      "rationale": "Separating owner identity from client capabilities makes least privilege explicit and testable.",
+      "consequences": [
+        "Remote administration is intentionally unsupported.",
+        "Every new automation route requires an explicit scope decision and test."
+      ]
+    }
+  ],
+  "residual_risks": [
+    {
+      "id": "R1",
+      "statement": "Compromise of the owner's operating-system account can bypass the application's local boundary.",
+      "owner": "local operator",
+      "disposition": "accept",
+      "review_by": null,
+      "related": [
+        "I1",
+        "I4"
+      ],
+      "next_action": "Reassess the architecture before any remote, shared-user, or production-secret use."
+    }
+  ]
+}

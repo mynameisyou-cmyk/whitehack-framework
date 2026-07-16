@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:whitehack:integrity-case:1.0",
+  "title": "Whitehack Integrity Case",
+  "description": "A traceable defensive assurance case connecting intention to implementation and evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case",
+    "authorization",
+    "intent",
+    "components",
+    "boundaries",
+    "invariants",
+    "threats",
+    "controls",
+    "evidence",
+    "decisions",
+    "residual_risks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "version", "status", "owners", "last_reviewed"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^IC-[A-Z0-9][A-Z0-9-]*$"
+        },
+        "title": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "status": {
+          "enum": ["draft", "reviewed", "accepted", "superseded"]
+        },
+        "owners": {
+          "$ref": "#/$defs/non_empty_strings"
+        },
+        "last_reviewed": {
+          "$ref": "#/$defs/date"
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scope", "evidence_reference", "expires", "excluded_actions"],
+      "properties": {
+        "status": {
+          "enum": ["authorized", "not_required", "unknown"]
+        },
+        "scope": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "expires": {
+          "anyOf": [
+            {"$ref": "#/$defs/date"},
+            {"type": "null"}
+          ]
+        },
+        "excluded_actions": {
+          "$ref": "#/$defs/non_empty_strings"
+        }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "safety_properties", "non_goals"],
+      "properties": {
+        "purpose": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "safety_properties": {
+          "$ref": "#/$defs/non_empty_strings"
+        },
+        "non_goals": {
+          "$ref": "#/$defs/non_empty_strings"
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/boundary"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/invariant"
+      }
+    },
+    "threats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/threat"
+      }
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/control"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/residual_risk"
+      }
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "non_empty_strings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/non_empty_string"
+      }
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "component_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$"
+    },
+    "invariant_id": {
+      "type": "string",
+      "pattern": "^I[0-9]+$"
+    },
+    "control_id": {
+      "type": "string",
+      "pattern": "^C[0-9]+$"
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "kind", "trust", "description"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/component_id"
+        },
+        "name": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "kind": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "trust": {
+          "enum": ["trusted", "partially_trusted", "untrusted", "external"]
+        },
+        "description": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from", "to", "carrier", "trust_change", "entry_points", "data"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^B[0-9]+$"
+        },
+        "from": {
+          "$ref": "#/$defs/component_id"
+        },
+        "to": {
+          "$ref": "#/$defs/component_id"
+        },
+        "carrier": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "trust_change": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "entry_points": {
+          "$ref": "#/$defs/non_empty_strings"
+        },
+        "data": {
+          "$ref": "#/$defs/non_empty_strings"
+        }
+      }
+    },
+    "invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "rationale", "failure_impact", "priority"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/invariant_id"
+        },
+        "statement": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "rationale": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "failure_impact": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "priority": {
+          "enum": ["low", "medium", "high", "critical"]
+        }
+      }
+    },
+    "threat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "actor", "scenario", "preconditions", "targets", "likelihood", "impact"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^T[0-9]+$"
+        },
+        "actor": {
+          "$ref": "#/$defs/component_id"
+        },
+        "scenario": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "preconditions": {
+          "$ref": "#/$defs/non_empty_strings"
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/invariant_id"
+          }
+        },
+        "likelihood": {
+          "enum": ["unlikely", "possible", "likely", "observed"]
+        },
+        "impact": {
+          "enum": ["low", "medium", "high", "critical"]
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "intent", "implementation", "enforces", "limitations"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/control_id"
+        },
+        "type": {
+          "enum": ["preventive", "detective", "corrective", "recovery"]
+        },
+        "intent": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "implementation": {
+          "$ref": "#/$defs/non_empty_strings"
+        },
+        "enforces": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/invariant_id"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "claim", "artifact", "result", "observed_at", "verifies"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^E[0-9]+$"
+        },
+        "kind": {
+          "enum": ["test", "probe", "review", "trace", "config", "analysis"]
+        },
+        "claim": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "artifact": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "result": {
+          "enum": ["pass", "fail", "inconclusive"]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "verifies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[IC][0-9]+$"
+          }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "context", "choice", "rationale", "consequences"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^D[0-9]+$"
+        },
+        "context": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "choice": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "rationale": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "consequences": {
+          "$ref": "#/$defs/non_empty_strings"
+        }
+      }
+    },
+    "residual_risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "owner", "disposition", "review_by", "related", "next_action"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]+$"
+        },
+        "statement": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "owner": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "disposition": {
+          "enum": ["accept", "mitigate", "transfer", "avoid", "investigate"]
+        },
+        "review_by": {
+          "anyOf": [
+            {"$ref": "#/$defs/date"},
+            {"type": "null"}
+          ]
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/invariant_id"
+          }
+        },
+        "next_action": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    }
+  }
+}

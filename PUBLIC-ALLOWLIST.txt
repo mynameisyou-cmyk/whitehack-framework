@@ -1,6 +1,8 @@
 # Exact source paths for the first sanitized whitehack-framework release.
 # Copy only these paths into a clean repository with no operational Git history.
 # In the standalone public repo, promote site/README.md to the root README.md.
+# The clean distribution may then add only reviewed host-specific files; release 1
+# adds .github/workflows/verify-and-deploy.yml for verification and Pages delivery.
 PUBLIC-ALLOWLIST.txt
 LICENSE
 SECURITY.md
